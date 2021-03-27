@@ -15,7 +15,7 @@ from threading import Thread
 from pydub import AudioSegment
 
 NOTIFY_MSG = "Remove Initial Pages like Contents, Preface, Acknowledgements to avoid those in mp3..."
-THREADS = 1
+THREADS = cpu_count()
 
 def random_name():
     s=""
