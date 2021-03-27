@@ -1,3 +1,2 @@
-pydub==0.25.1
 gTTS==2.2.2
 pdfminer==20191125

@@ -12,17 +12,23 @@ from re import sub
 from multiprocessing import cpu_count 
 import ctypes 
 from threading import Thread
-from pydub import AudioSegment
+from datetime import datetime
 
-NOTIFY_MSG = "'Remove Initial Pages like Contents, Preface, Acknowledgements to avoid those in mp3...'"
+NOTIFY_MSG = "'Remove Pages Contents, Preface, Acknowledgements, References'"
 THREADS = cpu_count()
 
-def random_name():
+def random_name(length=6):
     s=""
     a="abcdfeghijklmnopqrstuvwxyz1234567890"
-    for i in range(6):
+    for i in range(length):
         s+=a[int(random()*100)%36]
     return s
+
+def cleanup(filename):
+    if "linux" in PLATFORM:
+        system("rm *tmp* ")
+    else:
+        system("del /f *tmp* ")
 
 def pdfparser(data,filename):
     fp = open(data, 'rb')
@@ -53,7 +59,7 @@ def remove_extra_pages(filename):
                 pass
     else:    
         ctypes.windll.user32.MessageBoxW(0, NOTIFY_MSG, "Notification", 1)
-        pid= system("notepad" + filename)
+        pid= system("notepad " + filename)
         if(pid==0):
             return
 
@@ -71,12 +77,15 @@ def worker(text,filename,i):
     tts.save(filename+"_"+str(i)+".mp3")
 
 def collect_files(filename):
-    book = AudioSegment.from_mp3(filename+"_0.mp3")
+    fp = open(filename+"_0.mp3","rb")
+    book = fp.read()
+    fp.close()
     for i in range(1,THREADS):
-        book = book + AudioSegment.from_mp3(filename+"_"+str(i)+".mp3")
-    opt_file = filename.replace("tmp","mp3")
-    book.export(opt_file, format="mp3")
-    system("rm "+filename+"_*")
+        fp=open(filename+"_"+str(i)+".mp3","rb")
+        book = book + fp.read()
+        fp.close()
+    opt_file = open("Output_"+datetime.now().strftime("%X").replace(":","_")+".mp3","wb")
+    opt_file.write(book)
 
 if __name__=="__main__":
     assert ( len(argv)>1 )
@@ -102,6 +111,5 @@ if __name__=="__main__":
     
     for i in range(THREADS):
         threads[i].join()
-    system("rm "+filename)
     collect_files(filename)
-    
+    cleanup(filename)
