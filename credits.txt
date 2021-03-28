@@ -1,0 +1,2 @@
+pdfminer : Yusuke Shinyama [yusuke@shinyama.jp]
+gtts : Pierre Nicolas Durette [pndurette@gmail.com]

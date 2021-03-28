@@ -1,3 +1,8 @@
+Author : Rahul Kumar
+Email : kum28ra@gmail.com
+
+See credits.txt
+
 pip install -r requirements.txt
 Works best with English only pdf
 Usage :

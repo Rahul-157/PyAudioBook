@@ -11,7 +11,7 @@ from re import sub
 import ctypes 
 from threading import Thread
 from datetime import datetime
-from .utils import *
+from utils import *
 
 
 def pdfparser(data,filename):
@@ -60,7 +60,7 @@ def collect_files(filename):
         fp=open(filename+"_"+str(i)+".mp3","rb")
         book = book + fp.read()
         fp.close()
-    opt_file = open("Output_"+datetime.now().strftime("%X").replace(":","_")+".mp3","wb")
+    opt_file = open("outputs/Output_"+datetime.now().strftime("%X").replace(":","_")+".mp3","wb")
     opt_file.write(book)
 
 
