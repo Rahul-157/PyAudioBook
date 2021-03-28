@@ -88,6 +88,8 @@ def process_file(pdf_to_process,language="en",out_path=path.expanduser('~'),out_
     
     for i in range(THREADS):
         threads[i].join()
+    out_path = out_path.replace("~", path.expanduser("~"))
+    out_path = path.abspath(out_path)
     collect_files(filename,path.join(out_path,out_name))
     cleanup(filename)
 

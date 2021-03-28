@@ -1,9 +1,4 @@
-##### Author : Rahul Kumar
-##### Email : kum28ra@gmail.com
-
-*pip install -r requirements.txt*
-
-Works best with English only pdf
+Works best with English pdf
 
 Usage :
 *import pyaudiobook*
