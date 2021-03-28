@@ -4,7 +4,7 @@ from gtts import langs
 from sys import platform as PLATFORM
 from os import system
 import logging
-logger = logging.getLogger('AudioBook')
+logger = logging.getLogger('pyAudioBook')
 logger.setLevel(logging.DEBUG)
 NOTIFY_MSG = "'Remove Pages Contents, Preface, Acknowledgements, References'"
 THREADS = cpu_count()

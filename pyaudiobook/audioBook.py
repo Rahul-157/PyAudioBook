@@ -6,12 +6,12 @@ from pdfminer.converter import  TextConverter
 from pdfminer.layout import LAParams
 from io import StringIO
 from gtts import gTTS
-from os import system
+from os import system,path
 from re import sub
 import ctypes 
 from threading import Thread
 from datetime import datetime
-from utils import *
+from .utils import *
 
 
 def pdfparser(data,filename):
@@ -52,7 +52,7 @@ def worker(text,filename,i,language):
     tts = gTTS(text,lang=language)
     tts.save(filename+"_"+str(i)+".mp3")
 
-def collect_files(filename):
+def collect_files(filename,output_name):
     fp = open(filename+"_0.mp3","rb")
     book = fp.read()
     fp.close()
@@ -60,11 +60,12 @@ def collect_files(filename):
         fp=open(filename+"_"+str(i)+".mp3","rb")
         book = book + fp.read()
         fp.close()
-    opt_file = open("outputs/Output_"+datetime.now().strftime("%X").replace(":","_")+".mp3","wb")
+    opt_file = open(output_name+".mp3","wb")
     opt_file.write(book)
+    opt_file.close()
 
 
-def main(pdf_to_process,language="en"):
+def process_file(pdf_to_process,language="en",out_path=path.expanduser('~'),out_name="Output_"+datetime.now().strftime("%X").replace(":","_")):
     filename = random_name()+".tmp"
     language = language_check(language)
     if("linux" in PLATFORM):
@@ -88,7 +89,7 @@ def main(pdf_to_process,language="en"):
     
     for i in range(THREADS):
         threads[i].join()
-    collect_files(filename)
+    collect_files(filename,path.join(out_path,out_name))
     cleanup(filename)
 
 if __name__=="__main__":
