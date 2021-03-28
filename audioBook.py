@@ -5,30 +5,14 @@ from pdfminer.pdfpage import PDFPage
 from pdfminer.converter import  TextConverter
 from pdfminer.layout import LAParams
 from io import StringIO
-from random import random
 from gtts import gTTS
 from os import system
 from re import sub
-from multiprocessing import cpu_count 
 import ctypes 
 from threading import Thread
 from datetime import datetime
+from .utils import *
 
-NOTIFY_MSG = "'Remove Pages Contents, Preface, Acknowledgements, References'"
-THREADS = cpu_count()
-
-def random_name(length=6):
-    s=""
-    a="abcdfeghijklmnopqrstuvwxyz1234567890"
-    for i in range(length):
-        s+=a[int(random()*100)%36]
-    return s
-
-def cleanup(filename):
-    if "linux" in PLATFORM:
-        system("rm *tmp* ")
-    else:
-        system("del /f *tmp* ")
 
 def pdfparser(data,filename):
     fp = open(data, 'rb')
@@ -63,17 +47,9 @@ def remove_extra_pages(filename):
         if(pid==0):
             return
 
-def find_last_word(start,blk_size,text):
-    lst_idx = start + blk_size
-    if(lst_idx>=len(text)):
-        lst_idx=len(text)-1
-    for i in range(lst_idx,start,-1):
-        if(text[i]==" "):
-            return i
-            break
-    
-def worker(text,filename,i):
-    tts = gTTS(text,lang="hi")
+  
+def worker(text,filename,i,language):
+    tts = gTTS(text,lang=language)
     tts.save(filename+"_"+str(i)+".mp3")
 
 def collect_files(filename):
@@ -87,13 +63,14 @@ def collect_files(filename):
     opt_file = open("Output_"+datetime.now().strftime("%X").replace(":","_")+".mp3","wb")
     opt_file.write(book)
 
-if __name__=="__main__":
-    assert ( len(argv)>1 )
+
+def main(pdf_to_process,language="en"):
     filename = random_name()+".tmp"
+    language = language_check(language)
     if("linux" in PLATFORM):
-        system("less "+argv[1]+" > "+filename)
+        system("less "+pdf_to_process+" > "+filename)
     else:
-        pdfparser(argv[1],filename)
+        pdfparser(pdf_to_process,filename)
     remove_extra_pages(filename)
     f = open(filename,"r")
     text = f.read()
@@ -105,7 +82,7 @@ if __name__=="__main__":
         last_idx = find_last_word(start,block_size,text)
         if(i==THREADS-1):
             last_idx=len(text)
-        threads.append(Thread(target = worker,args=(text[start:last_idx+1],filename,i)))
+        threads.append(Thread(target = worker,args=(text[start:last_idx+1],filename,i,language)))
         threads[i].start()
         start=last_idx+1
     
@@ -113,3 +90,11 @@ if __name__=="__main__":
         threads[i].join()
     collect_files(filename)
     cleanup(filename)
+
+if __name__=="__main__":
+    assert ( len(argv)>1 )
+    if(len(argv)==3):
+        main(argv[1],argv[2])
+    else:
+        main(argv[1])
+    
