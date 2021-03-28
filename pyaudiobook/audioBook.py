@@ -13,7 +13,6 @@ from threading import Thread
 from datetime import datetime
 from .utils import *
 
-
 def pdfparser(data,filename):
     fp = open(data, 'rb')
     rsrcmgr = PDFResourceManager()
@@ -25,7 +24,7 @@ def pdfparser(data,filename):
         interpreter.process_page(page)
         data =  retstr.getvalue() 
     data = sub(" \(cid:\d{1,6}\) ","",data)
-    textfile = open(filename,'w+')
+    textfile = open(filename,mode="w+", encoding="utf-8")
     textfile.write(data)
     textfile.close()
 
@@ -53,14 +52,14 @@ def worker(text,filename,i,language):
     tts.save(filename+"_"+str(i)+".mp3")
 
 def collect_files(filename,output_name):
-    fp = open(filename+"_0.mp3","rb")
+    fp = open(filename+"_0.mp3",mode="rb")
     book = fp.read()
     fp.close()
     for i in range(1,THREADS):
-        fp=open(filename+"_"+str(i)+".mp3","rb")
+        fp= open(filename+"_"+str(i)+".mp3",mode="rb")
         book = book + fp.read()
         fp.close()
-    opt_file = open(output_name+".mp3","wb")
+    opt_file = open(output_name+".mp3",mode="wb")
     opt_file.write(book)
     opt_file.close()
 
@@ -73,7 +72,7 @@ def process_file(pdf_to_process,language="en",out_path=path.expanduser('~'),out_
     else:
         pdfparser(pdf_to_process,filename)
     remove_extra_pages(filename)
-    f = open(filename,"r")
+    f = open(filename,mode="r", encoding="utf-8")
     text = f.read()
     f.close()
     block_size = int(len(text)/THREADS)+1
@@ -94,8 +93,9 @@ def process_file(pdf_to_process,language="en",out_path=path.expanduser('~'),out_
 
 if __name__=="__main__":
     assert ( len(argv)>1 )
+    print(path.expanduser('~'))
     if(len(argv)==3):
-        main(argv[1],argv[2])
+        process_file(argv[1],argv[2])
     else:
-        main(argv[1])
+        process_file(argv[1])
     
