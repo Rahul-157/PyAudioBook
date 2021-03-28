@@ -14,8 +14,8 @@ import ctypes
 from threading import Thread
 from pydub import AudioSegment
 
-NOTIFY_MSG = "Remove Initial Pages like Contents, Preface, Acknowledgements to avoid those in mp3..."
-THREADS = 1
+NOTIFY_MSG = "'Remove Initial Pages like Contents, Preface, Acknowledgements to avoid those in mp3...'"
+THREADS = cpu_count()
 
 def random_name():
     s=""
@@ -47,6 +47,7 @@ def remove_extra_pages(filename):
                 system("notify-send "+ NOTIFY_MSG)
                 pid= system(editor +" "+ filename)
                 if(pid==0):
+                    
                     return
             except:
                 pass
@@ -55,7 +56,15 @@ def remove_extra_pages(filename):
         pid= system("notepad" + filename)
         if(pid==0):
             return
-    
+
+def find_last_word(start,blk_size,text):
+    lst_idx = start + blk_size
+    if(lst_idx>=len(text)):
+        lst_idx=len(text)-1
+    for i in range(lst_idx,start,-1):
+        if(text[i]==" "):
+            return i
+            break
     
 def worker(text,filename,i):
     tts = gTTS(text,lang="hi")
@@ -80,11 +89,16 @@ if __name__=="__main__":
     f = open(filename,"r")
     text = f.read()
     f.close()
-    block_size = int(len(text)/4)+1
+    block_size = int(len(text)/THREADS)+1
     threads = list()
+    start=0
     for i in range(THREADS):
-        threads.append(Thread(target = worker,args=(text[i*block_size:(i+1)*block_size],filename,i)))
+        last_idx = find_last_word(start,block_size,text)
+        if(i==THREADS-1):
+            last_idx=len(text)
+        threads.append(Thread(target = worker,args=(text[start:last_idx+1],filename,i)))
         threads[i].start()
+        start=last_idx+1
     
     for i in range(THREADS):
         threads[i].join()
