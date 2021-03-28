@@ -2,12 +2,18 @@
 ##### Email : kum28ra@gmail.com
 
 *pip install -r requirements.txt*
+
 Works best with English only pdf
+
 Usage :
 *python3 audioBook.py filename language*
+
 Language is optional, if not provided then default is English
+
 eg :
 *python3 audioBook.py sample.pdf hi*
+
+
 Language Supported by gtts
         {
             "af": "Afrikaans",
