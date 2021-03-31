@@ -2,13 +2,15 @@ from random import random
 from multiprocessing import cpu_count 
 from gtts import langs
 from sys import platform as PLATFORM
-from os import system
+from os import system,path
 import logging
 logger = logging.getLogger('pyAudioBook')
 logger.setLevel(logging.DEBUG)
+
 NOTIFY_MSG = "'Remove Pages Contents, Preface, Acknowledgements, References'"
 THREADS = cpu_count()
 LANGS = langs._langs
+TEMP_LOC = path.join(path.expanduser("~"),".TXTnMP3")
 
 def language_check(language):
     while(language not in LANGS):
@@ -27,11 +29,9 @@ def find_last_word(start,blk_size,text):
             return i
             break
   
-
-
-def cleanup(filename):
+def cleanup():
     if "linux" in PLATFORM:
-        system("rm *tmp* ")
+        system("rm -rf "+TEMP_LOC)
     else:
         system("del /f *tmp* ")
 

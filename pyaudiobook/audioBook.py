@@ -1,16 +1,14 @@
 #!/usr/bin/env python
-from sys import platform as PLATFORM, argv
 from pdfminer.pdfinterp import PDFResourceManager, PDFPageInterpreter
 from pdfminer.pdfpage import PDFPage
 from pdfminer.converter import  TextConverter
 from pdfminer.layout import LAParams
 from io import StringIO
 from gtts import gTTS
-from os import system,path
+from os import system
 from re import sub
 import ctypes 
 from threading import Thread
-from datetime import datetime
 from .utils import *
 
 def pdfparser(data,filename):
@@ -49,9 +47,11 @@ def remove_extra_pages(filename):
   
 def worker(text,filename,i,language):
     tts = gTTS(text,lang=language)
+    filename = filename.replace(".txt", "")
     tts.save(filename+"_"+str(i)+".mp3")
 
 def collect_files(filename,output_name):
+    filename = filename.replace(".txt", "")
     fp = open(filename+"_0.mp3",mode="rb")
     book = fp.read()
     fp.close()
@@ -59,45 +59,25 @@ def collect_files(filename,output_name):
         fp= open(filename+"_"+str(i)+".mp3",mode="rb")
         book = book + fp.read()
         fp.close()
-    opt_file = open(output_name+".mp3",mode="wb")
+    opt_file = open(output_name,mode="wb")
     opt_file.write(book)
     opt_file.close()
 
 
-def process_file(pdf_to_process,language="en",out_path=path.expanduser('~'),out_name="Output_"+datetime.now().strftime("%X").replace(":","_")):
-    filename = random_name()+".tmp"
-    language = language_check(language)
-    if("linux" in PLATFORM):
-        system("less "+pdf_to_process+" > "+filename)
-    else:
-        pdfparser(pdf_to_process,filename)
-    remove_extra_pages(filename)
-    f = open(filename,mode="r", encoding="utf-8")
+def process_file(txtFile,num_th,lang):
+    f = open(txtFile,mode="r", encoding="utf-8")
     text = f.read()
     f.close()
-    block_size = int(len(text)/THREADS)+1
+    block_size = int(len(text)/num_th)+1
     threads = list()
     start=0
-    for i in range(THREADS):
+    for i in range(num_th):
         last_idx = find_last_word(start,block_size,text)
-        if(i==THREADS-1):
+        if(i==num_th-1):
             last_idx=len(text)
-        threads.append(Thread(target = worker,args=(text[start:last_idx+1],filename,i,language)))
+        threads.append(Thread(target = worker,args=(text[start:last_idx+1],txtFile,i,lang)))
         threads[i].start()
         start=last_idx+1
     
-    for i in range(THREADS):
+    for i in range(num_th):
         threads[i].join()
-    out_path = out_path.replace("~", path.expanduser("~"))
-    out_path = path.abspath(out_path)
-    collect_files(filename,path.join(out_path,out_name))
-    cleanup(filename)
-
-if __name__=="__main__":
-    assert ( len(argv)>1 )
-    print(path.expanduser('~'))
-    if(len(argv)==3):
-        process_file(argv[1],argv[2])
-    else:
-        process_file(argv[1])
-    

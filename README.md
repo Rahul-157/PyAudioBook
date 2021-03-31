@@ -1,9 +1,11 @@
 Works best with English pdf
 
 Usage :
+*pip install pyaudiobook*
+
 *import pyaudiobook*
 
-*pyaudiobook.process_file(input_file_path,language="en",out_path = output_file_path,out_name=output_file_name)*
+*pyaudiobook.Pdf2Mp3(input_file_path,language="en",out_path = output_file_path,out_name=output_file_name,NumThreads=1)*
 
 Language,out_path and out_name are optional.
 
@@ -14,7 +16,8 @@ Default Output Path : User Home Directory
 Default Output File Name : Output_timestamp
 
 eg :
-*pyaudiobook.process_file("sample.pdf",language="hi",out_path = '~/MyBooks',out_name='History of India')*
+*convertor = pyaudiobook.Pdf2Mp3("sample.pdf",language="hi",out_path = '~/MyBooks',out_name='History of India',NumThreads=8)*
+*print(convertor.output) #To get Output Filename*
 
 
 Language Supported
