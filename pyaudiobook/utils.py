@@ -5,7 +5,7 @@ from sys import platform as PLATFORM
 from os import system,path
 import logging
 logger = logging.getLogger('pyaudiobook')
-logger.setLevel(logging.DEBUG)
+logging.basicConfig(level = logging.INFO)
 
 NOTIFY_MSG = "'Remove Pages Contents, Preface, Acknowledgements, References'"
 THREADS = cpu_count()

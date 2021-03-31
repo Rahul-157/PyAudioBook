@@ -11,7 +11,7 @@ setuptools.setup(
     name='pyaudiobook',
     license="MIT",
     description='pyaudiobook is a python package which converts pdf to mp3 files',
-    version='v0.0.4',
+    version='v0.0.5',
     long_description=README,
     long_description_content_type="text/markdown",
     url='https://github.com/Rahul-157/AudioBook',

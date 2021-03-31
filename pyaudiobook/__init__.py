@@ -12,7 +12,6 @@ def SetDefaultsIfBlank(lang,op,on,th):
         op = expanduser('~')
     else:
         op = get_absolute_path(op)
-        print(op)
     if not on:
         on = "Output_"+datetime.now().strftime("%X").replace(":","_")
     if not th:
@@ -31,12 +30,15 @@ class Pdf2Mp3:
         self.lang = lang
         self.output = output+".mp3"
         self.textFile = join(TEMP_LOC,random_name()+".txt")
+        self.threads = NumThreads
+    
+    def convert(self):
         logger.info("Generating Text...")
         self.generateText()
         logger.info("Text file : "+ self.textFile)
         remove_extra_pages(self.textFile)
         logger.info("Conversion Started...")
-        process_file(self.textFile,NumThreads,lang)   
+        process_file(self.textFile,self.threads,self.lang)   
         logger.info("Wrapping Up...")
         collect_files(self.textFile,self.output)
         cleanup()
@@ -51,6 +53,11 @@ class Pdf2Mp3:
             system("less "+self.input+" > "+self.textFile)
         else:
             pdfparser(self.input,self.textFile)
+        # Extract Text from Pdf
+        f = open(self.textFile)
+        text = f.read()
+        f.close()
+        return text
 
 
 

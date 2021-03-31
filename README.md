@@ -18,7 +18,11 @@ Default Output File Name : Output_timestamp
 Default Number of Threads : Total Cores Available
 eg :
 *convertor = pyaudiobook.Pdf2Mp3("sample.pdf",lang="hi",out_path = '~/MyBooks',out_name='History of India',NumThreads=8)*
-*print(convertor.output) #To get Output Filename*
+*convertor.convert() #To get Output Filename*
+
+*Or just to extract text from PDF*
+
+*convertor.generateText()*
 
 
 Language Supported
