@@ -4,13 +4,24 @@ from gtts import langs
 from sys import platform as PLATFORM
 from os import system,path
 import logging
-logger = logging.getLogger('pyAudioBook')
+logger = logging.getLogger('pyaudiobook')
 logger.setLevel(logging.DEBUG)
 
 NOTIFY_MSG = "'Remove Pages Contents, Preface, Acknowledgements, References'"
 THREADS = cpu_count()
 LANGS = langs._langs
 TEMP_LOC = path.join(path.expanduser("~"),".TXTnMP3")
+
+
+def get_absolute_path(filepath):
+    if "linux" not in PLATFORM:
+        filepath = filepath.replace('/','\\')
+    if(filepath[0]=='~'):
+        filepath = path.join(path.expanduser('~'),filepath[2:])
+    else:
+        filepath = path.abspath(filepath)
+    return filepath
+       
 
 def language_check(language):
     while(language not in LANGS):
@@ -33,7 +44,7 @@ def cleanup():
     if "linux" in PLATFORM:
         system("rm -rf "+TEMP_LOC)
     else:
-        system("del /f *tmp* ")
+        system("rd /s /q "+TEMP_LOC)
 
 
 def random_name(length=6):

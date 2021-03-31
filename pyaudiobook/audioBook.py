@@ -5,11 +5,15 @@ from pdfminer.converter import  TextConverter
 from pdfminer.layout import LAParams
 from io import StringIO
 from gtts import gTTS
-from os import system
+from os import system,stat
 from re import sub
 import ctypes 
 from threading import Thread
 from .utils import *
+from time import sleep,time
+
+
+done = False
 
 def pdfparser(data,filename):
     fp = open(data, 'rb')
@@ -65,12 +69,14 @@ def collect_files(filename,output_name):
 
 
 def process_file(txtFile,num_th,lang):
+    global done
     f = open(txtFile,mode="r", encoding="utf-8")
     text = f.read()
     f.close()
     block_size = int(len(text)/num_th)+1
     threads = list()
     start=0
+    s_time = time()
     for i in range(num_th):
         last_idx = find_last_word(start,block_size,text)
         if(i==num_th-1):
@@ -78,6 +84,34 @@ def process_file(txtFile,num_th,lang):
         threads.append(Thread(target = worker,args=(text[start:last_idx+1],txtFile,i,lang)))
         threads[i].start()
         start=last_idx+1
-    
+    progressBar(txtFile)
     for i in range(num_th):
         threads[i].join()
+    done = True
+    e_time = time()
+    print(f'\rProgress: |{"█"*70}| {100.0}% Completed')
+    logger.info("Conversion Finished in : "+ str(e_time-s_time) +" seconds\n")
+
+
+def printProgressBar (total, filename,length = 70, fill = '█'):
+    global done
+    while not done:
+        itr=0
+        for i in range(THREADS):
+            itr = itr + (stat(filename+"_"+str(i)+".mp3").st_size)
+        if itr >= total: 
+            break
+        percent = ("{0:.1f}").format(100 * (itr / float(total)))
+        filledLength = int(length * itr // total)
+        bar = fill * filledLength + '-' * (length - filledLength)
+        print(f'\rProgress: |{bar}| {percent}% Completed', end = '\r')
+        sleep(5)
+
+def progressBar(txtFile):
+    total = 916.55 * stat(txtFile).st_size
+    txtFile = txtFile.replace(".txt","")
+    print(f'Progress: |{"-"*70}| {0.0}% Completed', end = '\r')
+    p_bar = Thread(target = printProgressBar,args=(total,txtFile))
+    p_bar.start()
+
+   
