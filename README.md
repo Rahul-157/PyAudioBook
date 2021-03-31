@@ -23,7 +23,7 @@ eg :
 
 *convertor.convert()*
 
-*convertor.output  #For Output File*
+*output_filename = convertor.output  #For Output File*
 
 *Or just to extract text from PDF*
 
