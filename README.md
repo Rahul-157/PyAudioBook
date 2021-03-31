@@ -20,10 +20,13 @@ Default Number of Threads : Total Cores Available
 eg :
 
 *convertor = pyaudiobook.Pdf2Mp3("sample.pdf",lang="hi",out_path = '~/MyBooks',out_name='History of India',NumThreads=8)*
+
 *convertor.convert()*
+
 *convertor.output  #For Output File*
 
 *Or just to extract text from PDF*
+
 *txt = convertor.generateText()*
 
 
