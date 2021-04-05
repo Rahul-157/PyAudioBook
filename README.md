@@ -5,9 +5,9 @@ Usage :
 
 *import pyaudiobook*
 
-*pyaudiobook.Pdf2Mp3(input_file_path,lang="en",out_path = output_file_path,out_name=output_file_name,NumThreads=1)*
+*pyaudiobook.Pdf2Mp3(input_file_path,lang="en",out_path = output_file_path,out_name=output_file_name,num_threads=1)*
 
-lang, out_path, out_name, NumThreads are optional.
+lang, out_path, out_name, num_threads are optional.
 
 Default Language : English
 
@@ -19,7 +19,7 @@ Default Number of Threads : Total Cores Available
 
 eg :
 
-*convertor = pyaudiobook.Pdf2Mp3("sample.pdf",lang="hi",out_path = '~/MyBooks',out_name='History of India',NumThreads=8)*
+*convertor = pyaudiobook.Pdf2Mp3("sample.pdf",lang="hi",out_path = '~/MyBooks',out_name='History of India',num_threads=8)*
 
 *convertor.convert()*
 

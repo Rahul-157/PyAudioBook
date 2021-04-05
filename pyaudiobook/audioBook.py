@@ -91,8 +91,7 @@ def progressBar(text_file):
     total = 916.55 * stat(text_file).st_size
     text_file = text_file.replace(".txt","")
     print(f'Progress: |{"-"*70}| {0.0}% Completed', end = '\r')
-    # p_bar = Thread(target = printProgressBar,args=(total,text_file))
-    # p_bar.start()
-    printProgressBar(total, text_file)
+    p_bar = Thread(target = printProgressBar,args=(total,text_file))
+    p_bar.start()
 
    
